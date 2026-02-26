@@ -1,34 +1,34 @@
 @echo off
 
-setlocal enabledelayedexpansion
+setlocal EnableExtensions EnableDelayedExpansion
 
-set WWISE="C:\Audiokinetic\Wwise2025.1.5.9095\Authoring\x64\Release\bin\WwiseConsole.exe"
-set PROJECT="C:\Users\m17be\Documents\WwiseProjects\Converter\Converter.wproj"
-set SOUNDBANK="C:\Users\m17be\Documents\WwiseProjects\Converter\GeneratedSoundBanks\Windows"
-set INPUT=%~dp0Input
-set OUTPUT=%~dp0Output
-set WSOURCES=%~dp0ExternalSources.wsources
+echo Using default WwiseConsole.exe path (Modify it if you don't have Wwise version 2025.1.5.9095 on your PC)...
+set "WWISE=C:\Audiokinetic\Wwise2025.1.5.9095\Authoring\x64\Release\bin\WwiseConsole.exe"
+set "PROJECT=%~dp0Converter.wproj"
+set "INPUT=%~dp0Input"
+set "OUTPUT=%~dp0Output"
+set "WSOURCES=%~dp0ExternalSources.wsources"
 
 echo Creating ExternalSources.wsources...
 
-echo ^<?xml version="1.0" encoding="UTF-8"?^> > ExternalSources.wsources
-echo ^<ExternalSourcesList SchemaVersion="1" Root="ExternalSources"^> >> ExternalSources.wsources
+>"%WSOURCES%" (
+    echo ^<?xml version="1.0" encoding="UTF-8"?^>
+    echo ^<ExternalSourcesList SchemaVersion="1" Root="ExternalSources"^>
 
-for %%F in ("%INPUT%\*.wav") do (
-    set NAME=%%~nF
-    set FULLPATH=%%~fF
+    for %%F in ("%INPUT%\*.wav") do (
+        echo     ^<Source Path="!%%~fF!" Conversion="Custom Vorbis"/^>
+    )
 
-    echo     ^<ExternalSource Name=!NAME! Source=!FULLPATH! Conversion="Vorbis Voice" /^> >> ExternalSources.wsources
+    echo ^</ExternalSourcesList^>
 )
 
-echo ^</ExternalSourcesList^> >> ExternalSources.wsources
+echo Converting files in "%INPUT%"...
 
-echo Converting...
+"%WWISE%" convert-external-source "%PROJECT%" ^
+--source-file "%WSOURCES%" ^
+--output "%OUTPUT%" ^
+--quiet
 
-%WWISE% convert-external-source %PROJECT% ^
---source-file %WSOURCES% ^
---output %OUTPUT% ^
---verbose
-
-echo Done.
+echo Conversion complete
+echo You'll find the .wem files in "%OUTPUT%\Windows"
 pause
