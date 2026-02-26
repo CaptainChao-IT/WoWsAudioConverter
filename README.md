@@ -1,7 +1,7 @@
 # WoWsAudioConverter 
 A tool that enables everybody to convert .wav files (Mono, 44100Hz, Signed 16-bit PCM) in .wem files that WoWs can read.
 - Prerequisites:
-  Windows 10 (not tested, sorry...) & 11
+  Windows 10 (not tested, sorry...) or 11 and
   Audiokinetic Wwise 2022.1.5.9095 (for it to work right from the box)
   
 - Installation:
